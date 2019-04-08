@@ -5,8 +5,7 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps"; // remove PROVIDER
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
+    flex: 1,
     justifyContent: "flex-end",
     alignItems: "center"
   },
