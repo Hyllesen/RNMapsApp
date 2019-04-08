@@ -17,6 +17,8 @@ const styles = StyleSheet.create({
 export default () => (
   <View style={styles.container}>
     <MapView
+      showsUserLocation
+      followsUserLocation
       //provider={PROVIDER_GOOGLE} // remove if not using Google Maps
       style={styles.map}
       region={{
