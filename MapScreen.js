@@ -32,30 +32,22 @@ export default class MapScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <MapView
-          showsUserLocation
-          followsUserLocation
-          style={styles.map}
-          region={{
-            latitude: this.state.userLatitude,
-            longitude: this.state.userLongitude,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121
-          }}
-        />
-      </View>
+      <MapView
+        showsUserLocation
+        followsUserLocation
+        style={styles.map}
+        region={{
+          latitude: this.state.userLatitude,
+          longitude: this.state.userLongitude,
+          latitudeDelta: 0.015,
+          longitudeDelta: 0.0121
+        }}
+      />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    ...StyleSheet.absoluteFillObject,
-    flex: 1,
-    justifyContent: "flex-end",
-    alignItems: "center"
-  },
   map: {
     ...StyleSheet.absoluteFillObject
   }

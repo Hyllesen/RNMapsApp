@@ -2,11 +2,14 @@ import React, { Component } from "react";
 import {
   Text,
   StyleSheet,
+  Keyboard,
   View,
   PermissionsAndroid,
+  TouchableWithoutFeedback,
   Platform
 } from "react-native";
 import MapScreen from "./MapScreen";
+import PlaceInput from "./components/PlaceInput";
 
 export default class App extends Component {
   constructor(props) {
@@ -18,6 +21,10 @@ export default class App extends Component {
 
   componentDidMount() {
     this.requestFineLocation();
+  }
+
+  hideKeyboard() {
+    Keyboard.dismiss();
   }
 
   async requestFineLocation() {
@@ -39,10 +46,21 @@ export default class App extends Component {
 
   render() {
     if (this.state.hasMapPermission) {
-      return <MapScreen />;
+      return (
+        <TouchableWithoutFeedback onPress={this.hideKeyboard}>
+          <View style={styles.container}>
+            <MapScreen />
+            <PlaceInput />
+          </View>
+        </TouchableWithoutFeedback>
+      );
     }
     return null;
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+});
