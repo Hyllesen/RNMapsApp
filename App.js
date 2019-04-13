@@ -15,16 +15,39 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasMapPermission: false
+      hasMapPermission: false,
+      userLatitude: 0,
+      userLongitude: 0
     };
+    this.locationWatchId = null;
   }
 
   componentDidMount() {
     this.requestFineLocation();
   }
 
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.locationWatchId);
+  }
+
   hideKeyboard() {
     Keyboard.dismiss();
+  }
+
+  getUserPosition() {
+    this.setState({ hasMapPermission: true });
+    this.locationWatchId = navigator.geolocation.watchPosition(
+      pos => {
+        this.setState({
+          userLatitude: pos.coords.latitude,
+          userLongitude: pos.coords.longitude
+        });
+      },
+      err => console.warn(err),
+      {
+        enableHighAccuracy: true
+      }
+    );
   }
 
   async requestFineLocation() {
@@ -34,10 +57,10 @@ export default class App extends Component {
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          this.setState({ hasMapPermission: true });
+          this.getUserPosition();
         }
       } else {
-        this.setState({ hasMapPermission: true });
+        this.getUserPosition();
       }
     } catch (err) {
       console.warn(err);
@@ -49,8 +72,14 @@ export default class App extends Component {
       return (
         <TouchableWithoutFeedback onPress={this.hideKeyboard}>
           <View style={styles.container}>
-            <MapScreen />
-            <PlaceInput />
+            <MapScreen
+              userLatitude={this.state.userLatitude}
+              userLongitude={this.state.userLongitude}
+            />
+            <PlaceInput
+              userLatitude={this.state.userLatitude}
+              userLongitude={this.state.userLongitude}
+            />
           </View>
         </TouchableWithoutFeedback>
       );
