@@ -12,7 +12,6 @@ import MapScreen from "./MapScreen";
 import axios from "axios";
 import PlaceInput from "./components/PlaceInput";
 import PolyLine from "@mapbox/polyline";
-import Polyline from "react-native-maps";
 
 export default class App extends Component {
   constructor(props) {
@@ -98,9 +97,7 @@ export default class App extends Component {
             <MapScreen
               userLatitude={this.state.userLatitude}
               userLongitude={this.state.userLongitude}
-            >
-              <Polyline coordinates={this.state.destinationCoords} />
-            </MapScreen>
+            />
             <PlaceInput
               showDirectionsOnMap={this.showDirectionsOnMap}
               userLatitude={this.state.userLatitude}
