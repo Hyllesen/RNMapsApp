@@ -12,6 +12,7 @@ import MapScreen from "./MapScreen";
 import axios from "axios";
 import PlaceInput from "./components/PlaceInput";
 import PolyLine from "@mapbox/polyline";
+import { Polyline } from "react-native-maps";
 
 export default class App extends Component {
   constructor(props) {
@@ -19,7 +20,8 @@ export default class App extends Component {
     this.state = {
       hasMapPermission: false,
       userLatitude: 0,
-      userLongitude: 0
+      userLongitude: 0,
+      destinationCoords: []
     };
     this.locationWatchId = null;
     this.showDirectionsOnMap = this.showDirectionsOnMap.bind(this);
@@ -46,6 +48,7 @@ export default class App extends Component {
         latitude: point[0],
         longitude: point[1]
       }));
+      this.setState({ destinationCoords: latLng });
       console.log(latLng);
     } catch (err) {
       console.error(err);
@@ -90,6 +93,14 @@ export default class App extends Component {
   }
 
   render() {
+    let polyline =
+      this.state.destinationCoords.length > 0 ? (
+        <Polyline
+          coordinates={this.state.destinationCoords}
+          strokeWidth={4}
+          strokeColor="#000"
+        />
+      ) : null;
     if (this.state.hasMapPermission) {
       return (
         <TouchableWithoutFeedback onPress={this.hideKeyboard}>
@@ -97,7 +108,9 @@ export default class App extends Component {
             <MapScreen
               userLatitude={this.state.userLatitude}
               userLongitude={this.state.userLongitude}
-            />
+            >
+              {polyline}
+            </MapScreen>
             <PlaceInput
               showDirectionsOnMap={this.showDirectionsOnMap}
               userLatitude={this.state.userLatitude}
