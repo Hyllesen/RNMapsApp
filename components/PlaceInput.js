@@ -27,12 +27,14 @@ export default class PlaceInput extends Component {
     const result = await axios.get(
       `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=AIzaSyBx4jdXqTV6sX6IiFx1lC50l_0b_32Neys&input=${input}&location=${userLatitude},${userLongitude}&radius=2000`
     );
+    console.log(result.data);
     this.setState({ predictions: result.data.predictions });
   }
 
-  setDestination(main_text) {
+  setDestination(main_text, place_id) {
     Keyboard.dismiss();
     this.setState({ destinationInput: main_text, predictions: [] });
+    this.props.showDirectionsOnMap(place_id);
   }
 
   render() {
@@ -43,11 +45,13 @@ export default class PlaceInput extends Component {
       placeInputStyle
     } = styles;
     const predictions = this.state.predictions.map(prediction => {
-      const { id, structured_formatting } = prediction;
+      const { id, structured_formatting, place_id } = prediction;
       return (
         <TouchableOpacity
           key={id}
-          onPress={() => this.setDestination(structured_formatting.main_text)}
+          onPress={() =>
+            this.setDestination(structured_formatting.main_text, place_id)
+          }
         >
           <View style={suggestionStyle}>
             <Text style={main_textStyle}>

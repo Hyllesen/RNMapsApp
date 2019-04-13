@@ -9,7 +9,10 @@ import {
   Platform
 } from "react-native";
 import MapScreen from "./MapScreen";
+import axios from "axios";
 import PlaceInput from "./components/PlaceInput";
+import PolyLine from "@mapbox/polyline";
+import Polyline from "react-native-maps";
 
 export default class App extends Component {
   constructor(props) {
@@ -20,6 +23,7 @@ export default class App extends Component {
       userLongitude: 0
     };
     this.locationWatchId = null;
+    this.showDirectionsOnMap = this.showDirectionsOnMap.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +32,25 @@ export default class App extends Component {
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.locationWatchId);
+  }
+
+  async showDirectionsOnMap(placeId) {
+    const { userLatitude, userLongitude } = this.state;
+    try {
+      const result = await axios.get(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${userLatitude},${userLongitude}&destination=place_id:${placeId}&key=AIzaSyBx4jdXqTV6sX6IiFx1lC50l_0b_32Neys`
+      );
+      const points = PolyLine.decode(
+        result.data.routes[0].overview_polyline.points
+      );
+      const latLng = points.map(point => ({
+        latitude: point[0],
+        longitude: point[1]
+      }));
+      console.log(latLng);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   hideKeyboard() {
@@ -75,8 +98,11 @@ export default class App extends Component {
             <MapScreen
               userLatitude={this.state.userLatitude}
               userLongitude={this.state.userLongitude}
-            />
+            >
+              <Polyline coordinates={this.state.destinationCoords} />
+            </MapScreen>
             <PlaceInput
+              showDirectionsOnMap={this.showDirectionsOnMap}
               userLatitude={this.state.userLatitude}
               userLongitude={this.state.userLongitude}
             />
