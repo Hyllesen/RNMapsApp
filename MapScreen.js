@@ -15,7 +15,9 @@ export default class MapScreen extends Component {
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121
         }}
-      />
+      >
+        {this.props.children}
+      </MapView>
     );
   }
 }
