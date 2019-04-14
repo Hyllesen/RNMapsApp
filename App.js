@@ -12,7 +12,7 @@ import MapScreen from "./MapScreen";
 import axios from "axios";
 import PlaceInput from "./components/PlaceInput";
 import PolyLine from "@mapbox/polyline";
-import { Polyline } from "react-native-maps";
+import MapView, { Polyline } from "react-native-maps";
 
 export default class App extends Component {
   constructor(props) {
@@ -25,6 +25,7 @@ export default class App extends Component {
     };
     this.locationWatchId = null;
     this.showDirectionsOnMap = this.showDirectionsOnMap.bind(this);
+    this.map = React.createRef();
   }
 
   componentDidMount() {
@@ -49,6 +50,9 @@ export default class App extends Component {
         longitude: point[1]
       }));
       this.setState({ destinationCoords: latLng });
+      this.map.current.fitToCoordinates(latLng, {
+        edgePadding: { top: 40, bottom: 40, left: 40, right: 40 }
+      });
       console.log(latLng);
     } catch (err) {
       console.error(err);
@@ -105,12 +109,20 @@ export default class App extends Component {
       return (
         <TouchableWithoutFeedback onPress={this.hideKeyboard}>
           <View style={styles.container}>
-            <MapScreen
-              userLatitude={this.state.userLatitude}
-              userLongitude={this.state.userLongitude}
+            <MapView
+              ref={this.map}
+              showsUserLocation
+              followsUserLocation
+              style={styles.map}
+              region={{
+                latitude: this.state.userLatitude,
+                longitude: this.state.userLongitude,
+                latitudeDelta: 0.015,
+                longitudeDelta: 0.0121
+              }}
             >
               {polyline}
-            </MapScreen>
+            </MapView>
             <PlaceInput
               showDirectionsOnMap={this.showDirectionsOnMap}
               userLatitude={this.state.userLatitude}
@@ -127,5 +139,8 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject
   }
 });

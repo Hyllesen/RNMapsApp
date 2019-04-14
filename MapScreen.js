@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import MapView from "react-native-maps";
 
-export default class MapScreen extends Component {
+class MapScreen extends Component {
   render() {
     return (
       <MapView
@@ -21,6 +21,10 @@ export default class MapScreen extends Component {
     );
   }
 }
+
+export default React.forwardRef((props, ref) => (
+  <MapScreen innerRef={ref} {...props} />
+));
 
 const styles = StyleSheet.create({
   map: {
