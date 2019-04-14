@@ -12,7 +12,7 @@ import MapScreen from "./MapScreen";
 import axios from "axios";
 import PlaceInput from "./components/PlaceInput";
 import PolyLine from "@mapbox/polyline";
-import MapView, { Polyline } from "react-native-maps";
+import MapView, { Polyline, Marker } from "react-native-maps";
 
 export default class App extends Component {
   constructor(props) {
@@ -97,15 +97,27 @@ export default class App extends Component {
   }
 
   render() {
-    let polyline =
-      this.state.destinationCoords.length > 0 ? (
+    const {
+      destinationCoords,
+      userLatitude,
+      userLongitude,
+      hasMapPermission
+    } = this.state;
+    let polyline = null;
+    let marker = null;
+    if (destinationCoords.length > 0) {
+      polyline = (
         <Polyline
-          coordinates={this.state.destinationCoords}
+          coordinates={destinationCoords}
           strokeWidth={4}
           strokeColor="#000"
         />
-      ) : null;
-    if (this.state.hasMapPermission) {
+      );
+      marker = (
+        <Marker coordinate={destinationCoords[destinationCoords.length - 1]} />
+      );
+    }
+    if (hasMapPermission) {
       return (
         <TouchableWithoutFeedback onPress={this.hideKeyboard}>
           <View style={styles.container}>
@@ -115,18 +127,19 @@ export default class App extends Component {
               followsUserLocation
               style={styles.map}
               region={{
-                latitude: this.state.userLatitude,
-                longitude: this.state.userLongitude,
+                latitude: userLatitude,
+                longitude: userLongitude,
                 latitudeDelta: 0.015,
                 longitudeDelta: 0.0121
               }}
             >
               {polyline}
+              {marker}
             </MapView>
             <PlaceInput
               showDirectionsOnMap={this.showDirectionsOnMap}
-              userLatitude={this.state.userLatitude}
-              userLongitude={this.state.userLongitude}
+              userLatitude={userLatitude}
+              userLongitude={userLongitude}
             />
           </View>
         </TouchableWithoutFeedback>
